@@ -39,8 +39,8 @@
           <option value="a">Zaměstnavatel nebo jeho část se ruší – § 52 písm. a)</option>
           <option value="b">Zaměstnavatel nebo jeho část se stěhuje – § 52 písm. b)</option>
           <option value="c" selected>Jsem nadbytečný/á kvůli organizační změně – § 52 písm. c)</option>
-          <option value="d">Zdraví: pracovní úraz nebo nemoc z povolání – § 52 písm. d)</option>
-          <option value="e">Zdraví: dlouhodobě nemohu dělat svou práci (jiné důvody) – § 52 písm. e)</option>
+          <option value="d">Zdraví: podle lékařského posudku nemohu dlouhodobě dělat svou práci – § 52 písm. d)</option>
+          <option value="e">Dosáhl/a jsem nejvyšší přípustné expozice – § 52 písm. e)</option>
           <option value="f">Nesplňuji požadavky nebo mám neuspokojivé výsledky – § 52 písm. f)</option>
           <option value="g">Porušení pracovních povinností – § 52 písm. g)</option>
           <option value="h">Hrubé porušení režimu na nemocenské – § 52 písm. h)</option>
@@ -48,6 +48,13 @@
         </select>
         <p class="napoveda" id="napoveda-duvod">Důvod najdete přímo ve výpovědi nebo v dohodě.</p>
       </div>
+
+      <fieldset class="pole" id="pole-pricina" hidden>
+        <legend>Příčina ztráty zdravotní způsobilosti</legend>
+        <label class="volba"><input type="radio" name="pricina" value="uraz"> Pracovní úraz, nemoc z povolání nebo její ohrožení</label>
+        <label class="volba"><input type="radio" name="pricina" value="jine" checked> Jiné zdravotní důvody</label>
+        <p class="napoveda">Při pracovním úrazu nebo nemoci z povolání náleží jednorázová náhrada podle § 271ca ZP (není to odstupné).</p>
+      </fieldset>
 
       <div class="pole" id="pole-konec-dohody" hidden>
         <label for="konecDohody">Sjednaný den skončení podle dohody</label>
@@ -105,6 +112,7 @@
       <h3>Odstupné (zákonné minimum)</h3>
       <p class="castka" id="odstupne"></p>
       <p id="odstupne-popis" class="popis"></p>
+      <p id="nahrada" class="popis" hidden></p>
 
       <h3>Podpora v nezaměstnanosti</h3>
       <p id="podpora-popis" class="popis"></p>

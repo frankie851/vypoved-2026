@@ -6,6 +6,7 @@ import {
   vypovedniDoba,
   konecPomeru,
   odstupne,
+  nahradaUraz,
   vyberPravidel,
   vypocetPodpory,
   podpora,
@@ -106,14 +107,31 @@ test('dohoda z organizačních důvodů → odstupné, dohoda z jiného důvodu 
   assert.equal(odstupne({ kdo: 'dohoda', duvod: 'jiny', delkaLet: 3, prumernyHruby: 40000 }, rules).castka, 0);
 });
 
-test('§ 52 písm. d) (pracovní úraz) → 12× průměrný výdělek', () => {
-  const r = odstupne({ kdo: 'zamestnavatel', duvod: 'd', delkaLet: 0.3, prumernyHruby: 40000 }, rules);
-  assert.equal(r.castka, 480000);
-  assert.equal(r.nasobek, 12);
+test('§ 52 písm. d)/e) od 1. 6. 2025: odstupné 12× jen u e), u d) jednorázová náhrada § 271ca jen při úrazu', () => {
+  // ZP § 52 písm. d), e) ve znění zák. č. 120/2025 Sb.; § 67 odst. 1 a 3; § 271ca odst. 1
+  // https://www.zakonyprolidi.cz/cs/2006-262#p67, https://www.zakonyprolidi.cz/cs/2006-262#p271ca
+  assert.equal(odstupne({ kdo: 'zamestnavatel', duvod: 'd', delkaLet: 5, prumernyHruby: 40000 }, rules).castka, 0);
+  const e = odstupne({ kdo: 'zamestnavatel', duvod: 'e', delkaLet: 5, prumernyHruby: 40000 }, rules);
+  assert.equal(e.castka, 480000);
+  assert.equal(e.nasobek, 12);
+  assert.equal(odstupne({ kdo: 'dohoda', duvod: 'e', delkaLet: 1, prumernyHruby: 40000 }, rules).castka, 480000);
+  // § 52 písm. d) z důvodu pracovního úrazu: odstupné 0, zvlášť jednorázová náhrada 12×
+  const uraz = { kdo: 'zamestnavatel', duvod: 'd', pricinaUraz: true, delkaLet: 0.3, prumernyHruby: 40000 };
+  assert.equal(nahradaUraz(uraz, rules).castka, 480000);
+  assert.equal(nahradaUraz(uraz, rules).nasobek, 12);
+  assert.equal(odstupne(uraz, rules).castka, 0);
+  assert.equal(nahradaUraz({ ...uraz, kdo: 'dohoda' }, rules).castka, 480000);
+  // § 52 písm. d) z jiných zdravotních důvodů → nic
+  assert.equal(nahradaUraz({ ...uraz, pricinaUraz: false }, rules).castka, 0);
+  // jiné důvody → náhrada 0
+  for (const d of ['a', 'c', 'e', 'f', 'g', 'h']) {
+    assert.equal(nahradaUraz({ ...uraz, duvod: d }, rules).castka, 0, d);
+  }
+  assert.equal(nahradaUraz({ ...uraz, kdo: 'zamestnanec' }, rules).castka, 0);
 });
 
-test('§ 52 písm. e) až h) a zkušební doba → odstupné 0', () => {
-  for (const d of ['e', 'f', 'g', 'h']) {
+test('§ 52 písm. f) až h) a zkušební doba → odstupné 0', () => {
+  for (const d of ['f', 'g', 'h']) {
     assert.equal(odstupne({ kdo: 'zamestnavatel', duvod: d, delkaLet: 5, prumernyHruby: 40000 }, rules).castka, 0);
   }
   assert.equal(

@@ -26,7 +26,10 @@ Orientační výpočet, nejde o právní poradenství. Nic se neukládá ani neo
 - Délka 2 měsíce; **1 měsíc** u výpovědi podle § 52 písm. f), g), h).
 - **Zrušení ve zkušební době** – konec dnem doručení (§ 66 ZP).
 - **Odstupné** (§ 67 ZP): § 52 a)–c) nebo dohoda z týchž důvodů 1× / 2× / 3× průměrný výdělek
-  (PP < 1 rok / 1–2 roky / ≥ 2 roky); § 52 d) (pracovní úraz, nemoc z povolání) 12×.
+  (PP < 1 rok / 1–2 roky / ≥ 2 roky); § 52 e) (dosažení nejvyšší přípustné expozice) nebo dohoda z téhož
+  důvodu nejméně 12× (§ 67 odst. 3 ZP). U § 52 d) (zdravotní nezpůsobilost podle lékařského posudku) odstupné
+  nenáleží; byl-li příčinou pracovní úraz, nemoc z povolání nebo její ohrožení, náleží jednorázová náhrada
+  12× průměrného měsíčního výdělku podle § 271ca odst. 1 ZP – není to odstupné.
 - **Podpora 2026** (zák. č. 435/2004 Sb. ve znění zák. č. 120/2025 Sb.): podle věku ke dni podání žádosti
   do 52 let 5 měsíců (80, 80, 50, 50, 40 %), od 52 let 8 měsíců (3× 80, 3× 50, 2× 40 %),
   od 57 let 11 měsíců (3× 80, 3× 50, 5× 40 %); strop 38 537 Kč měsíčně (0,8× průměrné mzdy).

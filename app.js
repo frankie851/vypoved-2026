@@ -2,6 +2,7 @@ import {
   konecPomeru,
   vypovedniDoba,
   odstupne,
+  nahradaUraz,
   podpora,
   kontrolniSeznam,
   formatDatum,
@@ -38,10 +39,11 @@ function aktualizujPole() {
   $('#pole-duvod').hidden = k === 'zamestnanec';
   $('#pole-konec-dohody').hidden = k !== 'dohoda';
   $('#pole-zkusebni').hidden = k === 'dohoda';
+  $('#pole-pricina').hidden = k === 'zamestnanec' || duvod.value !== 'd';
   if (k === 'dohoda') {
     volbaJiny.hidden = false;
     volbaJiny.disabled = false;
-    $('#napoveda-duvod').textContent = 'Uvádí-li dohoda organizační důvod (§ 52 a–c) nebo pracovní úraz (§ 52 d), náleží odstupné.';
+    $('#napoveda-duvod').textContent = 'Uvádí-li dohoda organizační důvod (§ 52 a–c) nebo dosažení nejvyšší přípustné expozice (§ 52 e), náleží odstupné; u § 52 d) z důvodu pracovního úrazu či nemoci z povolání náleží jednorázová náhrada podle § 271ca.';
   } else {
     if (duvod.value === 'jiny') duvod.value = 'c';
     volbaJiny.hidden = true;
@@ -60,6 +62,7 @@ function vstupy() {
     duvod: k === 'zamestnanec' ? undefined : duvod.value,
     zkusebniDoba: k !== 'dohoda' && form.elements.zkusebniDoba.checked,
     konecDohody: form.elements.konecDohody.value || undefined,
+    pricinaUraz: k !== 'zamestnanec' && duvod.value === 'd' && form.elements.pricina.value === 'uraz',
   };
 }
 
@@ -134,10 +137,11 @@ function spocitej(e) {
   zobrazChyby(chyby);
   if (chyby.length) return;
 
-  let konec, od, p;
+  let konec, od, nahrada, p;
   try {
     konec = konecPomeru(v, rules);
     od = odstupne({ ...v, delkaLet: delka, prumernyHruby: hruby }, rules);
+    nahrada = nahradaUraz({ ...v, prumernyHruby: hruby }, rules);
     p = podpora({ vek, cistyVydelek: cisty, datumZadosti }, rules);
   } catch (err) {
     zobrazChyby([err.message]);
@@ -160,6 +164,10 @@ function spocitej(e) {
   // Odstupné
   $('#odstupne').textContent = kc.format(od.castka);
   $('#odstupne-popis').textContent = od.duvod + (od.castka > 0 ? ' Kolektivní smlouva může určit víc.' : '');
+  $('#nahrada').hidden = nahrada.castka === 0;
+  $('#nahrada').textContent = nahrada.castka > 0
+    ? `Jednorázová náhrada podle § 271ca ZP: ${kc.format(nahrada.castka)} – ${nahrada.nasobek}× průměrný měsíční výdělek; není to odstupné.`
+    : '';
 
   // Podpora
   vykresliPodporu(p);
