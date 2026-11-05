@@ -1,0 +1,10 @@
+{
+  "name": "vypoved-2026",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Výpověď 2026 – kdy končím a co mi náleží. Orientační kalkulačka.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
