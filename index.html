@@ -49,6 +49,14 @@
         <p class="napoveda" id="napoveda-duvod">Důvod najdete přímo ve výpovědi nebo v dohodě.</p>
       </div>
 
+      <div class="pole" id="pole-zvlast-hrube" hidden>
+        <label class="volba">
+          <input type="checkbox" id="zvlastHrube" name="zvlastHrube">
+          Šlo o porušení zvlášť hrubým způsobem (důvod pro okamžité zrušení)?
+        </label>
+        <p class="napoveda">Při skončení pro zvlášť hrubé porušení povinností nárok na podporu v nezaměstnanosti nevzniká (§ 39 odst. 2 zákona o zaměstnanosti).</p>
+      </div>
+
       <fieldset class="pole" id="pole-pricina" hidden>
         <legend>Příčina ztráty zdravotní způsobilosti</legend>
         <label class="volba"><input type="radio" name="pricina" value="uraz"> Pracovní úraz, nemoc z povolání nebo její ohrožení</label>
@@ -116,7 +124,7 @@
 
       <h3>Podpora v nezaměstnanosti</h3>
       <p id="podpora-popis" class="popis"></p>
-      <div class="tabulka-obal">
+      <div class="tabulka-obal" id="podpora-obal">
         <table id="podpora">
           <thead></thead>
           <tbody></tbody>

@@ -189,6 +189,29 @@ test('žádost v roce 2027 → platný zákon + vládní návrh (tisk 300)', () 
   assert.deepEqual(castky(vysoky.navrh), [28903, 28903, 28903, 28903, 27000]);
 });
 
+test('§ 52 písm. h) a g) pro zvlášť hrubé porušení → podpora vyloučena (§ 39 odst. 2 ZoZ)', () => {
+  // zákon č. 435/2004 Sb. § 39 odst. 2 písm. a), b), https://www.zakonyprolidi.cz/cs/2004-435#p39
+  const zaklad = { vek: 40, cistyVydelek: 30000, datumZadosti: '2026-08-11', kdo: 'zamestnavatel' };
+  const h = podpora({ ...zaklad, duvod: 'h' }, rules);
+  assert.equal(h.vylouceno, true);
+  assert.ok(h.duvodVylouceni.includes('§ 39 odst. 2'));
+  assert.equal(h.hlavni, null);
+  assert.equal(h.navrh, null);
+  const gHrube = podpora({ ...zaklad, duvod: 'g', zvlastHrube: true }, rules);
+  assert.equal(gHrube.vylouceno, true);
+  assert.equal(gHrube.hlavni, null);
+  const g = podpora({ ...zaklad, duvod: 'g' }, rules);
+  assert.equal(g.vylouceno, false);
+  assert.equal(g.hlavni.celkem, 90000);
+  const c = podpora({ ...zaklad, duvod: 'c' }, rules);
+  assert.equal(c.vylouceno, false);
+  assert.deepEqual(castky(c.hlavni), [24000, 24000, 15000, 15000, 12000]);
+  // výpověď zaměstnance a zrušení ve zkušební době nejsou skončením pro porušení povinností
+  assert.equal(podpora({ ...zaklad, kdo: 'zamestnanec' }, rules).vylouceno, false);
+  assert.equal(podpora({ ...zaklad, duvod: 'h', zkusebniDoba: true }, rules).vylouceno, false);
+  assert.ok(rules.podpora.vylouceni.zdroj.includes('§ 39 odst. 2'));
+});
+
 test('výběr pravidel podle data podání žádosti', () => {
   assert.equal(vyberPravidel(rules, '2026-12-31').rok, '2026');
   assert.equal(vyberPravidel(rules, '2027-01-01').rok, '2027');

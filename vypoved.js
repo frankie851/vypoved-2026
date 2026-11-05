@@ -242,14 +242,39 @@ export function vypocetPodpory(vek, cistyVydelek, sada) {
 }
 
 /**
- * Podpora podle data podání žádosti. Věk = dovršený věk ke dni podání žádosti.
- * @returns {{rok:string, mimoRozsah:boolean, hlavni:object, navrh:object|null}}
+ * Je nárok na podporu vyloučen způsobem skončení? (§ 39 odst. 2 ZoZ: skončení pro porušení
+ * povinností zvlášť hrubým způsobem – § 52 písm. h) vždy, § 52 písm. g) jen ve variantě
+ * zvlášť hrubého porušení.)
+ * @returns {{vylouceno:boolean, duvod:string|null}}
  */
-export function podpora({ vek, cistyVydelek, datumZadosti }, rules) {
+export function narokNaPodporu({ kdo, duvod, zkusebniDoba = false, zvlastHrube = false }, rules) {
+  const v = rules.podpora.vylouceni;
+  const kOddilu = (kdo === 'zamestnavatel' || kdo === 'dohoda') && !zkusebniDoba;
+  const vylouceno = kOddilu && (v.vzdy.includes(duvod) || (Boolean(zvlastHrube) && v.zvlastHrube.includes(duvod)));
+  return {
+    vylouceno,
+    duvod: vylouceno
+      ? 'Při skončení pracovního poměru pro zvlášť hrubé porušení povinností v posledních 6 měsících nárok na podporu nevzniká (§ 39 odst. 2 zákona o zaměstnanosti). Ověřte na úřadu práce.'
+      : null,
+  };
+}
+
+/**
+ * Podpora podle data podání žádosti. Věk = dovršený věk ke dni podání žádosti.
+ * Při vyloučení nároku (§ 39 odst. 2 ZoZ) vrací `vylouceno: true` a žádné částky.
+ * @returns {{rok:string, mimoRozsah:boolean, vylouceno:boolean, duvodVylouceni:string|null, hlavni:object|null, navrh:object|null}}
+ */
+export function podpora({ vek, cistyVydelek, datumZadosti, kdo, duvod, zkusebniDoba, zvlastHrube }, rules) {
   const v = vyberPravidel(rules, datumZadosti);
+  const n = narokNaPodporu({ kdo, duvod, zkusebniDoba, zvlastHrube }, rules);
+  if (n.vylouceno) {
+    return { rok: v.rok, mimoRozsah: v.mimoRozsah, vylouceno: true, duvodVylouceni: n.duvod, hlavni: null, navrh: null };
+  }
   return {
     rok: v.rok,
     mimoRozsah: v.mimoRozsah,
+    vylouceno: false,
+    duvodVylouceni: null,
     hlavni: vypocetPodpory(vek, cistyVydelek, v.sada),
     navrh: v.navrh ? vypocetPodpory(vek, cistyVydelek, v.navrh) : null,
   };

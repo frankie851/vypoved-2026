@@ -40,6 +40,7 @@ function aktualizujPole() {
   $('#pole-konec-dohody').hidden = k !== 'dohoda';
   $('#pole-zkusebni').hidden = k === 'dohoda';
   $('#pole-pricina').hidden = k === 'zamestnanec' || duvod.value !== 'd';
+  $('#pole-zvlast-hrube').hidden = k === 'zamestnanec' || duvod.value !== 'g';
   if (k === 'dohoda') {
     volbaJiny.hidden = false;
     volbaJiny.disabled = false;
@@ -63,6 +64,7 @@ function vstupy() {
     zkusebniDoba: k !== 'dohoda' && form.elements.zkusebniDoba.checked,
     konecDohody: form.elements.konecDohody.value || undefined,
     pricinaUraz: k !== 'zamestnanec' && duvod.value === 'd' && form.elements.pricina.value === 'uraz',
+    zvlastHrube: k !== 'zamestnanec' && duvod.value === 'g' && form.elements.zvlastHrube.checked,
   };
 }
 
@@ -142,7 +144,7 @@ function spocitej(e) {
     konec = konecPomeru(v, rules);
     od = odstupne({ ...v, delkaLet: delka, prumernyHruby: hruby }, rules);
     nahrada = nahradaUraz({ ...v, prumernyHruby: hruby }, rules);
-    p = podpora({ vek, cistyVydelek: cisty, datumZadosti }, rules);
+    p = podpora({ ...v, vek, cistyVydelek: cisty, datumZadosti }, rules);
   } catch (err) {
     zobrazChyby([err.message]);
     return;
@@ -170,31 +172,38 @@ function spocitej(e) {
     : '';
 
   // Podpora
-  vykresliPodporu(p);
-  $('#podpora-popis').textContent =
-    `Žádost podaná ${formatDatum(datumZadosti)}: podpůrčí doba ${p.hlavni.podpurciDoba} měsíců, ` +
-    `strop ${kc.format(p.hlavni.strop)} měsíčně. Počítáno z čistého výdělku ${kc.format(cisty)}.`;
-
+  $('#podpora-obal').hidden = p.vylouceno;
   const poznamky = [];
-  if (p.hlavni.mesice.some((m) => m.omezenoStropem) || p.navrh?.mesice.some((m) => m.omezenoStropem)) {
-    poznamky.push('* Částka je omezena maximální měsíční výší podpory.');
+  if (p.vylouceno) {
+    $('#podpora-popis').textContent = p.duvodVylouceni;
+  } else {
+    vykresliPodporu(p);
+    $('#podpora-popis').textContent =
+      `Žádost podaná ${formatDatum(datumZadosti)}: podpůrčí doba ${p.hlavni.podpurciDoba} měsíců, ` +
+      `strop ${kc.format(p.hlavni.strop)} měsíčně. Počítáno z čistého výdělku ${kc.format(cisty)}.`;
+    if (p.hlavni.mesice.some((m) => m.omezenoStropem) || p.navrh?.mesice.some((m) => m.omezenoStropem)) {
+      poznamky.push('* Částka je omezena maximální měsíční výší podpory.');
+    }
   }
-  if (p.hlavni.predbezne) {
+  if (v.duvod === 'g' && !v.zvlastHrube && v.kdo !== 'zamestnanec' && !v.zkusebniDoba) {
+    poznamky.push('Šlo-li o porušení povinností zvlášť hrubým způsobem, nárok na podporu nevzniká (§ 39 odst. 2 zákona o zaměstnanosti).');
+  }
+  if (p.hlavni?.predbezne) {
     poznamky.push(`Strop pro rok ${p.rok} ještě nebyl vyhlášen; použita částka ${kc.format(p.hlavni.strop)} (rok 2026). Skutečná částka se bude lišit.`);
   }
   if (p.navrh) {
     poznamky.push('Sloupec „Pokud projde návrh“ ukazuje vládní návrh (sněmovní tisk 300): 65/50/45 % a strop 0,6× průměrné mzdy (ilustračně na hodnotách 2026). Návrh zatím není zákon a může se změnit.');
   }
-  if (p.mimoRozsah) {
+  if (p.mimoRozsah && !p.vylouceno) {
     poznamky.push(`Pro rok ${datumZadosti.slice(0, 4)} nejsou parametry k dispozici; použita pravidla pro rok ${p.rok}.`);
   }
-  if (vek === 52 || vek === 57) {
+  if (!p.vylouceno && (vek === 52 || vek === 57)) {
     poznamky.push(`Hraniční věk ${vek} let: počítáno s delší podpůrčí dobou (dosavadní praxe úřadu práce). Ověřte na úřadu práce.`);
   }
   if (v.kdo === 'zamestnavatel' && !v.zkusebniDoba) {
     poznamky.push('Pokud by výpovědní doba skončila v ochranné době (např. pracovní neschopnost, mateřská), pracovní poměr se prodlouží o zbytek výpovědní doby (§ 53 ZP) – neplatí pro všechny důvody (§ 54 ZP).');
   }
-  poznamky.push('Podpora náleží, máte-li za poslední 2 roky alespoň 12 měsíců důchodového pojištění. Způsob skončení ani odstupné výši podpory neovlivňují.');
+  poznamky.push('Podpora náleží, máte-li za poslední 2 roky alespoň 12 měsíců důchodového pojištění a nepobíráte starobní důchod (§ 39 odst. 1 ZoZ). Výpověď dohodou ani odstupné podporu nesnižují ani neodkládají; výjimkou je skončení pro zvlášť hrubé porušení povinností (§ 39 odst. 2 ZoZ).');
   $('#poznamky').replaceChildren(...poznamky.map((t) => bunka('li', t)));
 
   // Kontrolní seznam

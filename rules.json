@@ -46,6 +46,14 @@
     }
   },
   "podpora": {
+    "vylouceni": {
+      "vzdy": ["h"],
+      "zvlastHrube": ["g"],
+      "text": "Nárok na podporu nemá uchazeč, s nímž byl v posledních 6 měsících před zařazením do evidence skončen pracovněprávní vztah z důvodu porušení povinnosti zvlášť hrubým způsobem (§ 52 písm. g) ZP ve variantě zvlášť hrubého porušení) nebo z důvodu porušení jiné povinnosti podle § 301a ZP zvlášť hrubým způsobem (§ 52 písm. h) ZP).",
+      "zdroj": "§ 39 odst. 2 písm. a), b) zákona č. 435/2004 Sb., o zaměstnanosti (písm. b) vloženo zákonem č. 365/2011 Sb.)",
+      "url": "https://www.zakonyprolidi.cz/cs/2004-435#p39",
+      "overeno": "2026-11-05"
+    },
     "2026": {
       "nazev": "Platný zákon (od 1. 1. 2026)",
       "predpis": "Zákon č. 435/2004 Sb., o zaměstnanosti, ve znění zákona č. 120/2025 Sb., § 43 a § 50",
