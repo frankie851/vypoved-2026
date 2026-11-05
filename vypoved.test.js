@@ -75,6 +75,14 @@ test('dohoda → konec sjednaným dnem', () => {
   assert.throws(() => konecPomeru({ doruceni: '2026-07-10', kdo: 'dohoda' }, rules));
 });
 
+test('dohoda se sjednaným dnem skončení před dnem uzavření → chyba', () => {
+  assert.throws(
+    () => konecPomeru({ doruceni: '2026-07-10', kdo: 'dohoda', konecDohody: '2026-07-01' }, rules),
+    { message: 'Sjednaný den skončení nemůže být dřív než den uzavření dohody.' },
+  );
+  assert.equal(konecPomeru({ doruceni: '2026-07-10', kdo: 'dohoda', konecDohody: '2026-07-10' }, rules), '2026-07-10');
+});
+
 test('neplatné datum vyhodí chybu', () => {
   assert.throws(() => pricistMesice('2026-02-30', 1));
   assert.throws(() => pricistMesice('10. 7. 2026', 1));
@@ -171,6 +179,18 @@ test('věk 57 → 11 měsíců (3 × 80 %, 3 × 50 %, 5 × 40 %)', () => {
   assert.equal(r.hlavni.podpurciDoba, 11);
   assert.deepEqual(r.hlavni.mesice.map((m) => m.procento), [80, 80, 80, 50, 50, 50, 40, 40, 40, 40, 40]);
   assert.equal(podpora({ vek: 56, cistyVydelek: 30000, datumZadosti: '2026-06-01' }, rules).hlavni.podpurciDoba, 8);
+});
+
+test('věk 52 a 57 s čistým výdělkem 60 000 Kč → 8 / 11 měsíců, první 3 měsíce omezeny stropem', () => {
+  // ZoZ § 43 a § 50 odst. 6; strop 38 537 Kč (sdělení MPSV č. 537/2025 Sb.)
+  const r52 = podpora({ vek: 52, cistyVydelek: 60000, datumZadosti: '2026-09-11' }, rules).hlavni;
+  assert.equal(r52.podpurciDoba, 8);
+  assert.deepEqual(castky(r52), [38537, 38537, 38537, 30000, 30000, 30000, 24000, 24000]);
+  assert.equal(r52.celkem, 253611);
+  const r57 = podpora({ vek: 57, cistyVydelek: 60000, datumZadosti: '2026-09-11' }, rules).hlavni;
+  assert.equal(r57.podpurciDoba, 11);
+  assert.deepEqual(castky(r57), [38537, 38537, 38537, 30000, 30000, 30000, 24000, 24000, 24000, 24000, 24000]);
+  assert.equal(r57.celkem, 325611);
 });
 
 test('zaokrouhlení podpory na celé koruny nahoru', () => {

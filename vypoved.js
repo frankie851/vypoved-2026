@@ -147,6 +147,7 @@ export function konecPomeru({ doruceni, kdo, duvod, zkusebniDoba = false, konecD
   if (kdo === 'dohoda') {
     if (!konecDohody) throw new Error('U dohody zadejte sjednaný den skončení.');
     parse(konecDohody);
+    if (konecDohody < doruceni) throw new Error('Sjednaný den skončení nemůže být dřív než den uzavření dohody.');
     return konecDohody;
   }
   return pricistMesice(doruceni, vypovedniDoba({ kdo, duvod }, rules));

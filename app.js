@@ -146,10 +146,6 @@ function spocitej(e) {
     zobrazChyby([err.message]);
     return;
   }
-  if (v.kdo === 'dohoda' && konec < v.doruceni) {
-    zobrazChyby(['Sjednaný den skončení nemůže být dřív než den uzavření dohody.']);
-    return;
-  }
 
   // Konec
   $('#konec').textContent = formatDatum(konec);
