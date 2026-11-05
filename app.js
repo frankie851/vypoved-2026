@@ -7,6 +7,7 @@ import {
   kontrolniSeznam,
   formatDatum,
   denVTydnu,
+  cislo,
 } from './vypoved.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -17,12 +18,6 @@ const duvod = $('#duvod');
 const volbaJiny = duvod.querySelector('option[value="jiny"]');
 let rules = null;
 let zadostUpravena = false;
-
-function cislo(hodnota) {
-  const t = String(hodnota).replace(/\s| /g, '').replace(',', '.');
-  if (t === '') return NaN;
-  return /^\d+(\.\d+)?$/.test(t) ? Number(t) : NaN;
-}
 
 function kdo() {
   return form.elements.kdo.value;
@@ -132,9 +127,11 @@ function spocitej(e) {
   if (!v.doruceni) chyby.push('Zadejte den doručení výpovědi.');
   if (v.kdo === 'dohoda' && !v.konecDohody) chyby.push('Zadejte sjednaný den skončení podle dohody.');
   if (Number.isNaN(delka)) chyby.push('Zadejte délku pracovního poměru v letech (např. 1,5).');
+  else if (delka > 60) chyby.push('Délka pracovního poměru je nepravděpodobně vysoká – desetinnou část oddělte čárkou (např. 1,5).');
   if (Number.isNaN(vek) || !Number.isInteger(vek) || vek < 15 || vek > 100) chyby.push('Zadejte věk celým číslem (15–100).');
   if (Number.isNaN(hruby)) chyby.push('Zadejte průměrný hrubý výdělek v Kč.');
   if (Number.isNaN(cisty)) chyby.push('Zadejte průměrný čistý výdělek v Kč.');
+  if (hruby < 1000 || cisty < 1000) chyby.push('Výdělek je podezřele nízký – zadejte měsíční částku v Kč, např. 40 000.');
   if (!datumZadosti) chyby.push('Zadejte den podání žádosti o podporu.');
   zobrazChyby(chyby);
   if (chyby.length) return;

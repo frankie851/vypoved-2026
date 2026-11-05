@@ -100,6 +100,21 @@ export function pracovniDnyPo(isoDatum, n) {
   return d;
 }
 
+// --- Vstupy ------------------------------------------------------------------
+
+/**
+ * Převod čísla zapsaného česky na Number. Mezery (i nezlomitelné) se ignorují, čárka je
+ * desetinná. Tečka následovaná přesně třemi číslicemi (v řetězci bez čárky) je oddělovač
+ * tisíců ('40.000' → 40000), jiná tečka je desetinná ('1.5' → 1.5). Neplatný vstup → NaN.
+ */
+export function cislo(hodnota) {
+  let t = String(hodnota ?? '').replace(/\s/g, '');
+  if (t === '') return NaN;
+  if (!t.includes(',') && /^\d+(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');
+  else t = t.replace(',', '.');
+  return /^\d+(\.\d+)?$/.test(t) ? Number(t) : NaN;
+}
+
 // --- Výpovědní doba a konec PP -----------------------------------------------
 
 function overDuvod(kdo, duvod) {

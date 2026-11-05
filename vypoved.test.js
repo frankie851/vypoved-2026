@@ -12,6 +12,7 @@ import {
   podpora,
   pracovniDnyPo,
   kontrolniSeznam,
+  cislo,
 } from './vypoved.js';
 
 const rules = JSON.parse(readFileSync(new URL('./rules.json', import.meta.url), 'utf8'));
@@ -247,4 +248,20 @@ test('kontrolní seznam obsahuje povinné položky s termíny', () => {
   assert.equal(up.termin, '2026-09-15'); // čt 10. 9. → pá 11., po 14., út 15.
   assert.equal(s.find((p) => p.id === 'zapoctovy-list').termin, '2026-09-10');
   assert.equal(s.find((p) => p.id === 'zdravotni-pojistovna').termin, '2026-09-19');
+});
+
+// --- Vstupy ------------------------------------------------------------------
+
+test('převod českého zápisu čísel', () => {
+  assert.equal(cislo('40.000'), 40000);
+  assert.equal(cislo('30.000'), 30000);
+  assert.equal(cislo('1.234.567'), 1234567);
+  assert.equal(cislo('40 000'), 40000);
+  assert.equal(cislo('40\u00a0000'), 40000);
+  assert.equal(cislo('40000,50'), 40000.5);
+  assert.equal(cislo('1,5'), 1.5);
+  assert.equal(cislo('1.5'), 1.5);
+  assert.ok(Number.isNaN(cislo('-1')));
+  assert.ok(Number.isNaN(cislo('abc')));
+  assert.ok(Number.isNaN(cislo('')));
 });
