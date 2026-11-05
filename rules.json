@@ -23,9 +23,25 @@
         { "doLet": 2, "nasobek": 2 },
         { "doLet": null, "nasobek": 3 }
       ],
-      "duvodUraz": "d",
-      "nasobekUraz": 12,
-      "zdroj": "§ 67 odst. 1 zákoníku práce"
+      "predchoziPomer": {
+        "text": "Za dobu trvání pracovního poměru se považuje i doba trvání předchozího pracovního poměru u téhož zaměstnavatele, pokud doba od jeho skončení do vzniku následujícího pracovního poměru nepřesáhla 6 měsíců.",
+        "zdroj": "§ 67 odst. 2 zákoníku práce",
+        "url": "https://www.zakonyprolidi.cz/cs/2006-262#p67",
+        "overeno": "2026-11-05"
+      },
+      "duvodExpozice": "e",
+      "nasobekExpozice": 12,
+      "zdroj": "§ 67 odst. 1 a 3 zákoníku práce",
+      "url": "https://www.zakonyprolidi.cz/cs/2006-262#p67",
+      "overeno": "2026-11-05"
+    },
+    "nahrada271ca": {
+      "duvod": "d",
+      "nasobek": 12,
+      "text": "Jednorázová náhrada 12× průměrného měsíčního výdělku při skončení pracovního poměru podle § 52 písm. d) z důvodu pracovního úrazu, nemoci z povolání nebo ohrožení nemocí z povolání; není to odstupné.",
+      "zdroj": "§ 271ca odst. 1 zákoníku práce",
+      "url": "https://www.zakonyprolidi.cz/cs/2006-262#p271ca",
+      "overeno": "2026-11-05"
     },
     "dovolena": {
       "zdroj": "§ 222 odst. 2 zákoníku práce",
@@ -36,6 +52,14 @@
     }
   },
   "podpora": {
+    "vylouceni": {
+      "vzdy": ["h"],
+      "zvlastHrube": ["g"],
+      "text": "Nárok na podporu nemá uchazeč, s nímž byl v posledních 6 měsících před zařazením do evidence zaměstnavatelem skončen pracovněprávní vztah z důvodu porušení povinnosti zvlášť hrubým způsobem (§ 52 písm. g) ZP ve variantě zvlášť hrubého porušení) nebo z důvodu porušení jiné povinnosti podle § 301a ZP zvlášť hrubým způsobem (§ 52 písm. h) ZP).",
+      "zdroj": "§ 39 odst. 2 písm. a), b) zákona č. 435/2004 Sb., o zaměstnanosti (písm. b) vloženo zákonem č. 365/2011 Sb.)",
+      "url": "https://www.zakonyprolidi.cz/cs/2004-435#p39",
+      "overeno": "2026-11-05"
+    },
     "2026": {
       "nazev": "Platný zákon (od 1. 1. 2026)",
       "predpis": "Zákon č. 435/2004 Sb., o zaměstnanosti, ve znění zákona č. 120/2025 Sb., § 43 a § 50",
@@ -87,6 +111,15 @@
     { "nazev": "MPSV – Nová podpora v nezaměstnanosti v roce 2026", "url": "https://mpsv.gov.cz/cms/documents/1a49413e-8c82-6b1c-6f56-d060b01d81bc/Nov%C3%A1%20podpora%20v%20nezam%C4%9Bstnanosti%20%20v%20roce%202026.pdf" },
     { "nazev": "MPSV – Vláda schválila změny podpory v nezaměstnanosti (návrh 2027)", "url": "https://mpsv.gov.cz/vlada-schvalila-zmeny-podpory-v-nezamestnanosti-statu-usetri-az-5-miliard-korun-rocne" },
     { "nazev": "Poslanecká sněmovna – sněmovní tisk 300", "url": "https://www.psp.cz/sqw/historie.sqw?o=10&t=300" },
-    { "nazev": "ÚP ČR – Co dělat při ztrátě zaměstnání", "url": "https://up.gov.cz/co-delat-pri-ztrate-zamestnani" }
+    { "nazev": "ÚP ČR – Co dělat při ztrátě zaměstnání", "url": "https://up.gov.cz/co-delat-pri-ztrate-zamestnani" },
+    { "nazev": "Zákoník práce – § 51 výpovědní doba", "url": "https://www.zakonyprolidi.cz/cs/2006-262#p51" },
+    { "nazev": "Zákoník práce – § 52 výpovědní důvody", "url": "https://www.zakonyprolidi.cz/cs/2006-262#p52" },
+    { "nazev": "Zákoník práce – § 67 odstupné", "url": "https://www.zakonyprolidi.cz/cs/2006-262#p67" },
+    { "nazev": "Zákoník práce – § 271ca jednorázová náhrada", "url": "https://www.zakonyprolidi.cz/cs/2006-262#p271ca" },
+    { "nazev": "Zákon o zaměstnanosti – § 39 nárok na podporu", "url": "https://www.zakonyprolidi.cz/cs/2004-435#p39" },
+    { "nazev": "Zákon o zaměstnanosti – § 43 podpůrčí doba", "url": "https://www.zakonyprolidi.cz/cs/2004-435#p43" },
+    { "nazev": "Zákon o zaměstnanosti – § 50 výše podpory", "url": "https://www.zakonyprolidi.cz/cs/2004-435#p50" },
+    { "nazev": "Sdělení MPSV č. 537/2025 Sb. (průměrná mzda 48 171 Kč → strop 38 537 Kč)", "url": "https://www.zakonyprolidi.cz/cs/2025-537" },
+    { "nazev": "Zákon č. 120/2025 Sb. (úplné znění novely)", "url": "https://www.zakonyprolidi.cz/cs/2025-120" }
   ]
 }

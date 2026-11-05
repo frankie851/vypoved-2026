@@ -6,11 +6,13 @@ import {
   vypovedniDoba,
   konecPomeru,
   odstupne,
+  nahradaUraz,
   vyberPravidel,
   vypocetPodpory,
   podpora,
   pracovniDnyPo,
   kontrolniSeznam,
+  cislo,
 } from './vypoved.js';
 
 const rules = JSON.parse(readFileSync(new URL('./rules.json', import.meta.url), 'utf8'));
@@ -73,6 +75,14 @@ test('dohoda → konec sjednaným dnem', () => {
   assert.throws(() => konecPomeru({ doruceni: '2026-07-10', kdo: 'dohoda' }, rules));
 });
 
+test('dohoda se sjednaným dnem skončení před dnem uzavření → chyba', () => {
+  assert.throws(
+    () => konecPomeru({ doruceni: '2026-07-10', kdo: 'dohoda', konecDohody: '2026-07-01' }, rules),
+    { message: 'Sjednaný den skončení nemůže být dřív než den uzavření dohody.' },
+  );
+  assert.equal(konecPomeru({ doruceni: '2026-07-10', kdo: 'dohoda', konecDohody: '2026-07-10' }, rules), '2026-07-10');
+});
+
 test('neplatné datum vyhodí chybu', () => {
   assert.throws(() => pricistMesice('2026-02-30', 1));
   assert.throws(() => pricistMesice('10. 7. 2026', 1));
@@ -106,14 +116,31 @@ test('dohoda z organizačních důvodů → odstupné, dohoda z jiného důvodu 
   assert.equal(odstupne({ kdo: 'dohoda', duvod: 'jiny', delkaLet: 3, prumernyHruby: 40000 }, rules).castka, 0);
 });
 
-test('§ 52 písm. d) (pracovní úraz) → 12× průměrný výdělek', () => {
-  const r = odstupne({ kdo: 'zamestnavatel', duvod: 'd', delkaLet: 0.3, prumernyHruby: 40000 }, rules);
-  assert.equal(r.castka, 480000);
-  assert.equal(r.nasobek, 12);
+test('§ 52 písm. d)/e) od 1. 6. 2025: odstupné 12× jen u e), u d) jednorázová náhrada § 271ca jen při úrazu', () => {
+  // ZP § 52 písm. d), e) ve znění zák. č. 120/2025 Sb.; § 67 odst. 1 a 3; § 271ca odst. 1
+  // https://www.zakonyprolidi.cz/cs/2006-262#p67, https://www.zakonyprolidi.cz/cs/2006-262#p271ca
+  assert.equal(odstupne({ kdo: 'zamestnavatel', duvod: 'd', delkaLet: 5, prumernyHruby: 40000 }, rules).castka, 0);
+  const e = odstupne({ kdo: 'zamestnavatel', duvod: 'e', delkaLet: 5, prumernyHruby: 40000 }, rules);
+  assert.equal(e.castka, 480000);
+  assert.equal(e.nasobek, 12);
+  assert.equal(odstupne({ kdo: 'dohoda', duvod: 'e', delkaLet: 1, prumernyHruby: 40000 }, rules).castka, 480000);
+  // § 52 písm. d) z důvodu pracovního úrazu: odstupné 0, zvlášť jednorázová náhrada 12×
+  const uraz = { kdo: 'zamestnavatel', duvod: 'd', pricinaUraz: true, delkaLet: 0.3, prumernyHruby: 40000 };
+  assert.equal(nahradaUraz(uraz, rules).castka, 480000);
+  assert.equal(nahradaUraz(uraz, rules).nasobek, 12);
+  assert.equal(odstupne(uraz, rules).castka, 0);
+  assert.equal(nahradaUraz({ ...uraz, kdo: 'dohoda' }, rules).castka, 480000);
+  // § 52 písm. d) z jiných zdravotních důvodů → nic
+  assert.equal(nahradaUraz({ ...uraz, pricinaUraz: false }, rules).castka, 0);
+  // jiné důvody → náhrada 0
+  for (const d of ['a', 'c', 'e', 'f', 'g', 'h']) {
+    assert.equal(nahradaUraz({ ...uraz, duvod: d }, rules).castka, 0, d);
+  }
+  assert.equal(nahradaUraz({ ...uraz, kdo: 'zamestnanec' }, rules).castka, 0);
 });
 
-test('§ 52 písm. e) až h) a zkušební doba → odstupné 0', () => {
-  for (const d of ['e', 'f', 'g', 'h']) {
+test('§ 52 písm. f) až h) a zkušební doba → odstupné 0', () => {
+  for (const d of ['f', 'g', 'h']) {
     assert.equal(odstupne({ kdo: 'zamestnavatel', duvod: d, delkaLet: 5, prumernyHruby: 40000 }, rules).castka, 0);
   }
   assert.equal(
@@ -154,6 +181,18 @@ test('věk 57 → 11 měsíců (3 × 80 %, 3 × 50 %, 5 × 40 %)', () => {
   assert.equal(podpora({ vek: 56, cistyVydelek: 30000, datumZadosti: '2026-06-01' }, rules).hlavni.podpurciDoba, 8);
 });
 
+test('věk 52 a 57 s čistým výdělkem 60 000 Kč → 8 / 11 měsíců, první 3 měsíce omezeny stropem', () => {
+  // ZoZ § 43 a § 50 odst. 6; strop 38 537 Kč (sdělení MPSV č. 537/2025 Sb.)
+  const r52 = podpora({ vek: 52, cistyVydelek: 60000, datumZadosti: '2026-09-11' }, rules).hlavni;
+  assert.equal(r52.podpurciDoba, 8);
+  assert.deepEqual(castky(r52), [38537, 38537, 38537, 30000, 30000, 30000, 24000, 24000]);
+  assert.equal(r52.celkem, 253611);
+  const r57 = podpora({ vek: 57, cistyVydelek: 60000, datumZadosti: '2026-09-11' }, rules).hlavni;
+  assert.equal(r57.podpurciDoba, 11);
+  assert.deepEqual(castky(r57), [38537, 38537, 38537, 30000, 30000, 30000, 24000, 24000, 24000, 24000, 24000]);
+  assert.equal(r57.celkem, 325611);
+});
+
 test('zaokrouhlení podpory na celé koruny nahoru', () => {
   const r = vypocetPodpory(40, 30001, rules.podpora['2026']);
   assert.deepEqual(castky(r), [24001, 24001, 15001, 15001, 12001]);
@@ -169,6 +208,31 @@ test('žádost v roce 2027 → platný zákon + vládní návrh (tisk 300)', () 
   // strop návrhu 0,6× (ilustračně 28 903 Kč)
   const vysoky = podpora({ vek: 40, cistyVydelek: 60000, datumZadosti: '2027-01-15' }, rules);
   assert.deepEqual(castky(vysoky.navrh), [28903, 28903, 28903, 28903, 27000]);
+});
+
+test('§ 52 písm. h) a g) pro zvlášť hrubé porušení → podpora vyloučena (§ 39 odst. 2 ZoZ)', () => {
+  // zákon č. 435/2004 Sb. § 39 odst. 2 písm. a), b), https://www.zakonyprolidi.cz/cs/2004-435#p39
+  const zaklad = { vek: 40, cistyVydelek: 30000, datumZadosti: '2026-08-11', kdo: 'zamestnavatel' };
+  const h = podpora({ ...zaklad, duvod: 'h' }, rules);
+  assert.equal(h.vylouceno, true);
+  assert.ok(h.duvodVylouceni.includes('§ 39 odst. 2'));
+  assert.equal(h.hlavni, null);
+  assert.equal(h.navrh, null);
+  const gHrube = podpora({ ...zaklad, duvod: 'g', zvlastHrube: true }, rules);
+  assert.equal(gHrube.vylouceno, true);
+  assert.equal(gHrube.hlavni, null);
+  const g = podpora({ ...zaklad, duvod: 'g' }, rules);
+  assert.equal(g.vylouceno, false);
+  assert.equal(g.hlavni.celkem, 90000);
+  const c = podpora({ ...zaklad, duvod: 'c' }, rules);
+  assert.equal(c.vylouceno, false);
+  assert.deepEqual(castky(c.hlavni), [24000, 24000, 15000, 15000, 12000]);
+  // výpověď zaměstnance a zrušení ve zkušební době nejsou skončením pro porušení povinností
+  assert.equal(podpora({ ...zaklad, kdo: 'zamestnanec' }, rules).vylouceno, false);
+  // § 39 odst. 2 ZoZ: „zaměstnavatelem skončen“ – dohoda nárok nevylučuje
+  assert.equal(podpora({ ...zaklad, kdo: 'dohoda', duvod: 'h' }, rules).vylouceno, false);
+  assert.equal(podpora({ ...zaklad, duvod: 'h', zkusebniDoba: true }, rules).vylouceno, false);
+  assert.ok(rules.podpora.vylouceni.zdroj.includes('§ 39 odst. 2'));
 });
 
 test('výběr pravidel podle data podání žádosti', () => {
@@ -206,4 +270,27 @@ test('kontrolní seznam obsahuje povinné položky s termíny', () => {
   assert.equal(up.termin, '2026-09-15'); // čt 10. 9. → pá 11., po 14., út 15.
   assert.equal(s.find((p) => p.id === 'zapoctovy-list').termin, '2026-09-10');
   assert.equal(s.find((p) => p.id === 'zdravotni-pojistovna').termin, '2026-09-19');
+});
+
+// --- Vstupy ------------------------------------------------------------------
+
+test('převod českého zápisu čísel', () => {
+  assert.equal(cislo('40.000'), 40000);
+  assert.equal(cislo('30.000'), 30000);
+  assert.equal(cislo('1.234.567'), 1234567);
+  assert.equal(cislo('40 000'), 40000);
+  assert.equal(cislo('40\u00a0000'), 40000);
+  assert.equal(cislo('40000,50'), 40000.5);
+  assert.equal(cislo('1,5'), 1.5);
+  assert.equal(cislo('1.5'), 1.5);
+  assert.ok(Number.isNaN(cislo('-1')));
+  assert.ok(Number.isNaN(cislo('abc')));
+  assert.ok(Number.isNaN(cislo('')));
+});
+
+test('nápověda k délce PP uvádí započtení předchozího poměru (§ 67 odst. 2 ZP)', () => {
+  const html = readFileSync(new URL('./index.html', import.meta.url), 'utf8');
+  assert.ok(html.includes('§ 67 odst. 2'));
+  assert.ok(html.includes('6 měsíců'));
+  assert.ok(rules.zakonikPrace.odstupne.predchoziPomer.zdroj.includes('§ 67 odst. 2'));
 });

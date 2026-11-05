@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Výpověď 2026 – kdy končím a co mi náleží</title>
   <meta name="description" content="Orientační výpočet posledního dne pracovního poměru, odstupného a podpory v nezaměstnanosti podle pravidel pro rok 2026.">
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="app.js"></script>
 </head>
@@ -39,8 +40,8 @@
           <option value="a">Zaměstnavatel nebo jeho část se ruší – § 52 písm. a)</option>
           <option value="b">Zaměstnavatel nebo jeho část se stěhuje – § 52 písm. b)</option>
           <option value="c" selected>Jsem nadbytečný/á kvůli organizační změně – § 52 písm. c)</option>
-          <option value="d">Zdraví: pracovní úraz nebo nemoc z povolání – § 52 písm. d)</option>
-          <option value="e">Zdraví: dlouhodobě nemohu dělat svou práci (jiné důvody) – § 52 písm. e)</option>
+          <option value="d">Zdraví: podle lékařského posudku nemohu dlouhodobě dělat svou práci – § 52 písm. d)</option>
+          <option value="e">Dosáhl/a jsem nejvyšší přípustné expozice – § 52 písm. e)</option>
           <option value="f">Nesplňuji požadavky nebo mám neuspokojivé výsledky – § 52 písm. f)</option>
           <option value="g">Porušení pracovních povinností – § 52 písm. g)</option>
           <option value="h">Hrubé porušení režimu na nemocenské – § 52 písm. h)</option>
@@ -48,6 +49,21 @@
         </select>
         <p class="napoveda" id="napoveda-duvod">Důvod najdete přímo ve výpovědi nebo v dohodě.</p>
       </div>
+
+      <div class="pole" id="pole-zvlast-hrube" hidden>
+        <label class="volba">
+          <input type="checkbox" id="zvlastHrube" name="zvlastHrube">
+          Šlo o porušení zvlášť hrubým způsobem (důvod pro okamžité zrušení)?
+        </label>
+        <p class="napoveda">Při skončení pro zvlášť hrubé porušení povinností nárok na podporu v nezaměstnanosti nevzniká (§ 39 odst. 2 zákona o zaměstnanosti).</p>
+      </div>
+
+      <fieldset class="pole" id="pole-pricina" hidden>
+        <legend>Příčina ztráty zdravotní způsobilosti</legend>
+        <label class="volba"><input type="radio" name="pricina" value="uraz"> Pracovní úraz, nemoc z povolání nebo její ohrožení</label>
+        <label class="volba"><input type="radio" name="pricina" value="jine" checked> Jiné zdravotní důvody</label>
+        <p class="napoveda">Při pracovním úrazu nebo nemoci z povolání náleží jednorázová náhrada podle § 271ca ZP (není to odstupné).</p>
+      </fieldset>
 
       <div class="pole" id="pole-konec-dohody" hidden>
         <label for="konecDohody">Sjednaný den skončení podle dohody</label>
@@ -59,14 +75,14 @@
           <input type="checkbox" id="zkusebniDoba" name="zkusebniDoba">
           Jde o zrušení ve zkušební době
         </label>
-        <p class="napoveda">Ve zkušební době se pracovní poměr ruší bez výpovědní doby a končí dnem doručení, pokud v oznámení není pozdější den (§ 66 ZP).</p>
+        <p class="napoveda">Ve zkušební době se pracovní poměr ruší bez výpovědní doby a končí dnem doručení, pokud v oznámení není pozdější den (§ 66 ZP). V prvních 14 dnech pracovní neschopnosti zaměstnavatel ve zkušební době zrušit nesmí (§ 66 odst. 1 ZP).</p>
       </div>
 
       <div class="mrizka">
         <div class="pole">
           <label for="delka">Délka pracovního poměru (roky)</label>
           <input type="text" inputmode="decimal" id="delka" name="delka" placeholder="např. 1,5" autocomplete="off">
-          <p class="napoveda">Ke dni skončení. Půl roku = 0,5.</p>
+          <p class="napoveda">Ke dni skončení. Půl roku = 0,5. Počítejte i předchozí pracovní poměr u stejného zaměstnavatele, pokud mezi nimi nebyla pauza delší než 6 měsíců (§ 67 odst. 2 ZP).</p>
         </div>
         <div class="pole">
           <label for="vek">Věk v den podání žádosti o podporu</label>
@@ -105,10 +121,11 @@
       <h3>Odstupné (zákonné minimum)</h3>
       <p class="castka" id="odstupne"></p>
       <p id="odstupne-popis" class="popis"></p>
+      <p id="nahrada" class="popis" hidden></p>
 
       <h3>Podpora v nezaměstnanosti</h3>
       <p id="podpora-popis" class="popis"></p>
-      <div class="tabulka-obal">
+      <div class="tabulka-obal" id="podpora-obal">
         <table id="podpora">
           <thead></thead>
           <tbody></tbody>
