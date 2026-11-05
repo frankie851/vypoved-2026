@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Výpověď 2026 – kdy končím a co mi náleží</title>
+  <meta name="description" content="Orientační výpočet posledního dne pracovního poměru, odstupného a podpory v nezaměstnanosti podle pravidel pro rok 2026.">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="hlavicka">
+    <div class="obal">
+      <h1>Výpověď 2026</h1>
+      <p class="podtitul">Kdy končím a co mi náleží</p>
+    </div>
+  </header>
+
+  <main class="obal">
+    <form id="formular" class="karta" novalidate>
+      <h2>Zadání</h2>
+
+      <div class="pole">
+        <label for="doruceni">Den doručení výpovědi</label>
+        <input type="date" id="doruceni" name="doruceni" required>
+        <p class="napoveda">Den, kdy vám (nebo zaměstnavateli) výpověď převzal(a) nebo byla doručena.</p>
+      </div>
+
+      <fieldset class="pole">
+        <legend>Jak pracovní poměr končí</legend>
+        <label class="volba"><input type="radio" name="kdo" value="zamestnavatel" checked> Výpověď mi dal zaměstnavatel</label>
+        <label class="volba"><input type="radio" name="kdo" value="zamestnanec"> Výpověď dávám já (zaměstnanec)</label>
+        <label class="volba"><input type="radio" name="kdo" value="dohoda"> Dohoda o rozvázání pracovního poměru</label>
+      </fieldset>
+
+      <div class="pole" id="pole-duvod">
+        <label for="duvod">Důvod výpovědi</label>
+        <select id="duvod" name="duvod">
+          <option value="a">Zaměstnavatel nebo jeho část se ruší – § 52 písm. a)</option>
+          <option value="b">Zaměstnavatel nebo jeho část se stěhuje – § 52 písm. b)</option>
+          <option value="c" selected>Jsem nadbytečný/á kvůli organizační změně – § 52 písm. c)</option>
+          <option value="d">Zdraví: pracovní úraz nebo nemoc z povolání – § 52 písm. d)</option>
+          <option value="e">Zdraví: dlouhodobě nemohu dělat svou práci (jiné důvody) – § 52 písm. e)</option>
+          <option value="f">Nesplňuji požadavky nebo mám neuspokojivé výsledky – § 52 písm. f)</option>
+          <option value="g">Porušení pracovních povinností – § 52 písm. g)</option>
+          <option value="h">Hrubé porušení režimu na nemocenské – § 52 písm. h)</option>
+          <option value="jiny" hidden>Jiný důvod (dohoda bez uvedení organizačního důvodu)</option>
+        </select>
+        <p class="napoveda" id="napoveda-duvod">Důvod najdete přímo ve výpovědi nebo v dohodě.</p>
+      </div>
+
+      <div class="pole" id="pole-konec-dohody" hidden>
+        <label for="konecDohody">Sjednaný den skončení podle dohody</label>
+        <input type="date" id="konecDohody" name="konecDohody">
+      </div>
+
+      <div class="pole" id="pole-zkusebni">
+        <label class="volba">
+          <input type="checkbox" id="zkusebniDoba" name="zkusebniDoba">
+          Jde o zrušení ve zkušební době
+        </label>
+        <p class="napoveda">Ve zkušební době se pracovní poměr ruší bez výpovědní doby a končí dnem doručení, pokud v oznámení není pozdější den (§ 66 ZP).</p>
+      </div>
+
+      <div class="mrizka">
+        <div class="pole">
+          <label for="delka">Délka pracovního poměru (roky)</label>
+          <input type="text" inputmode="decimal" id="delka" name="delka" placeholder="např. 1,5" autocomplete="off">
+          <p class="napoveda">Ke dni skončení. Půl roku = 0,5.</p>
+        </div>
+        <div class="pole">
+          <label for="vek">Věk v den podání žádosti o podporu</label>
+          <input type="text" inputmode="numeric" id="vek" name="vek" placeholder="např. 40" autocomplete="off">
+        </div>
+        <div class="pole">
+          <label for="hruby">Průměrný hrubý měsíční výdělek (Kč)</label>
+          <input type="text" inputmode="decimal" id="hruby" name="hruby" placeholder="např. 40 000" autocomplete="off">
+          <p class="napoveda">Pro odstupné. Uveden bývá na výplatní pásce nebo ho sdělí mzdová účetní.</p>
+        </div>
+        <div class="pole">
+          <label for="cisty">Průměrný čistý měsíční výdělek (Kč)</label>
+          <input type="text" inputmode="decimal" id="cisty" name="cisty" placeholder="např. 30 000" autocomplete="off">
+          <p class="napoveda">Pro podporu. Úřad práce ho vezme ze zápočtového listu.</p>
+        </div>
+      </div>
+
+      <div class="pole">
+        <label for="datumZadosti">Den podání žádosti o podporu</label>
+        <input type="date" id="datumZadosti" name="datumZadosti">
+        <p class="napoveda">Výchozí je den po skončení pracovního poměru. Podle tohoto data se volí sazby podpory.</p>
+      </div>
+
+      <div id="chyby" class="chyby" role="alert" hidden></div>
+
+      <button type="submit" class="tlacitko">Spočítat</button>
+      <p class="napoveda soukromi">Nic se neukládá ani neodesílá. Výpočet probíhá jen ve vašem prohlížeči.</p>
+    </form>
+
+    <section id="vysledek" class="karta" hidden aria-live="polite">
+      <h2>Výsledek</h2>
+      <p class="stitek">Poslední den pracovního poměru</p>
+      <p class="konec" id="konec"></p>
+      <p id="konec-popis" class="popis"></p>
+
+      <h3>Odstupné (zákonné minimum)</h3>
+      <p class="castka" id="odstupne"></p>
+      <p id="odstupne-popis" class="popis"></p>
+
+      <h3>Podpora v nezaměstnanosti</h3>
+      <p id="podpora-popis" class="popis"></p>
+      <div class="tabulka-obal">
+        <table id="podpora">
+          <thead></thead>
+          <tbody></tbody>
+          <tfoot></tfoot>
+        </table>
+      </div>
+      <ul id="poznamky" class="poznamky"></ul>
+    </section>
+
+    <section id="seznam" class="karta" hidden>
+      <div class="seznam-hlavicka">
+        <h2>Kontrolní seznam</h2>
+        <button type="button" id="tisk" class="tlacitko druhotne">Vytisknout</button>
+      </div>
+      <ol id="ukoly" class="ukoly"></ol>
+    </section>
+  </main>
+
+  <footer class="paticka">
+    <div class="obal">
+      <p><strong>Orientační výpočet, nejde o právní poradenství.</strong>
+        Výsledek nezohledňuje kolektivní smlouvu, vnitřní předpisy, delší sjednanou výpovědní dobu ani prodloužení o ochrannou dobu.
+        V konkrétní situaci se obraťte na úřad práce, inspektorát práce nebo advokáta.</p>
+      <p>Pravidla ověřena k <span id="overeno">5. 11. 2026</span>.</p>
+      <details>
+        <summary>Zdroje</summary>
+        <ul id="zdroje"></ul>
+      </details>
+    </div>
+  </footer>
+</body>
+</html>

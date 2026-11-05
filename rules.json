@@ -1,0 +1,92 @@
+{
+  "overeno": "2026-11-05",
+  "poznamka": "Parametry ověřeny k datu 'overeno'. Výpočet podpory se řídí rokem podání žádosti o podporu.",
+  "zakonikPrace": {
+    "predpis": "Zákon č. 262/2006 Sb., zákoník práce, ve znění zákona č. 120/2025 Sb.",
+    "vypovedniDoba": {
+      "zakladniMesice": 2,
+      "kratsiMesice": 1,
+      "kratsiDuvody": ["f", "g", "h"],
+      "zacatek": "dnem doručení výpovědi",
+      "konec": "dnem se stejným číselným označením; není-li v posledním měsíci, posledním dnem měsíce",
+      "zdroj": "§ 51 zákoníku práce ve znění zákona č. 120/2025 Sb.",
+      "ucinnost": "2025-06-01"
+    },
+    "zkusebniDoba": {
+      "konec": "dnem doručení zrušení, není-li v něm uveden den pozdější",
+      "zdroj": "§ 66 zákoníku práce"
+    },
+    "odstupne": {
+      "duvody": ["a", "b", "c"],
+      "nasobky": [
+        { "doLet": 1, "nasobek": 1 },
+        { "doLet": 2, "nasobek": 2 },
+        { "doLet": null, "nasobek": 3 }
+      ],
+      "duvodUraz": "d",
+      "nasobekUraz": 12,
+      "zdroj": "§ 67 odst. 1 zákoníku práce"
+    },
+    "dovolena": {
+      "zdroj": "§ 222 odst. 2 zákoníku práce",
+      "text": "Náhrada mzdy za nevyčerpanou dovolenou přísluší jen při skončení pracovního poměru."
+    },
+    "ochrannaDoba": {
+      "zdroj": "§ 53 a § 54 zákoníku práce"
+    }
+  },
+  "podpora": {
+    "2026": {
+      "nazev": "Platný zákon (od 1. 1. 2026)",
+      "predpis": "Zákon č. 435/2004 Sb., o zaměstnanosti, ve znění zákona č. 120/2025 Sb., § 43 a § 50",
+      "ucinnost": "2026-01-01",
+      "strop": 38537,
+      "stropVypocet": "0,8 × průměrná mzda za 1.–3. čtvrtletí 2025 (48 171 Kč)",
+      "predbezne": false,
+      "pasma": [
+        { "odVeku": 0,  "mesice": 5,  "faze": [80, 80, 50, 50, 40] },
+        { "odVeku": 52, "mesice": 8,  "faze": [80, 80, 80, 50, 50, 50, 40, 40] },
+        { "odVeku": 57, "mesice": 11, "faze": [80, 80, 80, 50, 50, 50, 40, 40, 40, 40, 40] }
+      ],
+      "zdroj": "up.gov.cz – Změny v oblasti zaměstnanosti a podpory v nezaměstnanosti od 1. ledna 2026; MPSV – Nová podpora v nezaměstnanosti v roce 2026"
+    },
+    "2027": {
+      "nazev": "Platný zákon (stav k 5. 11. 2026)",
+      "predpis": "Zákon č. 435/2004 Sb., o zaměstnanosti, § 43 a § 50 (bez novely z tisku 300)",
+      "ucinnost": "2027-01-01",
+      "strop": 38537,
+      "stropVypocet": "0,8 × průměrná mzda za 1.–3. čtvrtletí 2026 – zatím nevyhlášeno, použita částka pro rok 2026",
+      "predbezne": true,
+      "pasma": [
+        { "odVeku": 0,  "mesice": 5,  "faze": [80, 80, 50, 50, 40] },
+        { "odVeku": 52, "mesice": 8,  "faze": [80, 80, 80, 50, 50, 50, 40, 40] },
+        { "odVeku": 57, "mesice": 11, "faze": [80, 80, 80, 50, 50, 50, 40, 40, 40, 40, 40] }
+      ],
+      "zdroj": "Zákon č. 435/2004 Sb. v platném znění; strop bude upřesněn po vyhlášení průměrné mzdy",
+      "navrh": "2027-navrh"
+    },
+    "2027-navrh": {
+      "nazev": "Vládní návrh – sněmovní tisk 300 (neschváleno)",
+      "predpis": "Návrh novely zákona o zaměstnanosti, sněmovní tisk 300 (vláda schválila 31. 8. 2026, 1. čtení 20. 10. 2026)",
+      "ucinnost": "2027-01-01",
+      "strop": 28903,
+      "stropVypocet": "0,6 × průměrná mzda; ilustračně na hodnotách roku 2026 (MPSV)",
+      "predbezne": true,
+      "jeNavrh": true,
+      "pasma": [
+        { "odVeku": 0,  "mesice": 5,  "faze": [65, 65, 50, 50, 45] },
+        { "odVeku": 52, "mesice": 8,  "faze": [65, 65, 50, 50, 45, 45, 45, 45] },
+        { "odVeku": 57, "mesice": 11, "faze": [65, 65, 50, 50, 45, 45, 45, 45, 45, 45, 45] }
+      ],
+      "zdroj": "psp.cz – sněmovní tisk 300; mpsv.gov.cz – Vláda schválila změny podpory v nezaměstnanosti"
+    }
+  },
+  "zdroje": [
+    { "nazev": "Zákon č. 120/2025 Sb. (flexinovela zákoníku práce)", "url": "https://www.epravo.cz/top/zakony/sbirka-zakonu/sb/2025/120" },
+    { "nazev": "ÚP ČR – Změny v oblasti zaměstnanosti a podpory v nezaměstnanosti od 1. 1. 2026", "url": "https://up.gov.cz/zmeny-v-oblasti-zamestnanosti-a-podpory-v-nezamestnanosti-od-1-ledna-2026" },
+    { "nazev": "MPSV – Nová podpora v nezaměstnanosti v roce 2026", "url": "https://mpsv.gov.cz/cms/documents/1a49413e-8c82-6b1c-6f56-d060b01d81bc/Nov%C3%A1%20podpora%20v%20nezam%C4%9Bstnanosti%20%20v%20roce%202026.pdf" },
+    { "nazev": "MPSV – Vláda schválila změny podpory v nezaměstnanosti (návrh 2027)", "url": "https://mpsv.gov.cz/vlada-schvalila-zmeny-podpory-v-nezamestnanosti-statu-usetri-az-5-miliard-korun-rocne" },
+    { "nazev": "Poslanecká sněmovna – sněmovní tisk 300", "url": "https://www.psp.cz/sqw/historie.sqw?o=10&t=300" },
+    { "nazev": "ÚP ČR – Co dělat při ztrátě zaměstnání", "url": "https://up.gov.cz/co-delat-pri-ztrate-zamestnani" }
+  ]
+}
