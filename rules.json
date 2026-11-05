@@ -23,6 +23,12 @@
         { "doLet": 2, "nasobek": 2 },
         { "doLet": null, "nasobek": 3 }
       ],
+      "predchoziPomer": {
+        "text": "Za dobu trvání pracovního poměru se považuje i doba trvání předchozího pracovního poměru u téhož zaměstnavatele, pokud doba od jeho skončení do vzniku následujícího pracovního poměru nepřesáhla 6 měsíců.",
+        "zdroj": "§ 67 odst. 2 zákoníku práce",
+        "url": "https://www.zakonyprolidi.cz/cs/2006-262#p67",
+        "overeno": "2026-11-05"
+      },
       "duvodExpozice": "e",
       "nasobekExpozice": 12,
       "zdroj": "§ 67 odst. 1 a 3 zákoníku práce",

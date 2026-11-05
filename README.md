@@ -26,7 +26,8 @@ Orientační výpočet, nejde o právní poradenství. Nic se neukládá ani neo
 - Délka 2 měsíce; **1 měsíc** u výpovědi podle § 52 písm. f), g), h).
 - **Zrušení ve zkušební době** – konec dnem doručení (§ 66 ZP).
 - **Odstupné** (§ 67 ZP): § 52 a)–c) nebo dohoda z týchž důvodů 1× / 2× / 3× průměrný výdělek
-  (PP < 1 rok / 1–2 roky / ≥ 2 roky); § 52 e) (dosažení nejvyšší přípustné expozice) nebo dohoda z téhož
+  (PP < 1 rok / 1–2 roky / ≥ 2 roky; do délky se počítá i předchozí pracovní poměr u téhož zaměstnavatele,
+  skončil-li nejvýše 6 měsíců před vznikem dalšího – § 67 odst. 2 ZP); § 52 e) (dosažení nejvyšší přípustné expozice) nebo dohoda z téhož
   důvodu nejméně 12× (§ 67 odst. 3 ZP). U § 52 d) (zdravotní nezpůsobilost podle lékařského posudku) odstupné
   nenáleží; byl-li příčinou pracovní úraz, nemoc z povolání nebo její ohrožení, náleží jednorázová náhrada
   12× průměrného měsíčního výdělku podle § 271ca odst. 1 ZP – není to odstupné.

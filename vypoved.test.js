@@ -285,3 +285,10 @@ test('převod českého zápisu čísel', () => {
   assert.ok(Number.isNaN(cislo('abc')));
   assert.ok(Number.isNaN(cislo('')));
 });
+
+test('nápověda k délce PP uvádí započtení předchozího poměru (§ 67 odst. 2 ZP)', () => {
+  const html = readFileSync(new URL('./index.html', import.meta.url), 'utf8');
+  assert.ok(html.includes('§ 67 odst. 2'));
+  assert.ok(html.includes('6 měsíců'));
+  assert.ok(rules.zakonikPrace.odstupne.predchoziPomer.zdroj.includes('§ 67 odst. 2'));
+});
