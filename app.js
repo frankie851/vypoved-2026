@@ -35,7 +35,7 @@ function aktualizujPole() {
   $('#pole-konec-dohody').hidden = k !== 'dohoda';
   $('#pole-zkusebni').hidden = k === 'dohoda';
   $('#pole-pricina').hidden = k === 'zamestnanec' || duvod.value !== 'd';
-  $('#pole-zvlast-hrube').hidden = k === 'zamestnanec' || duvod.value !== 'g';
+  $('#pole-zvlast-hrube').hidden = k !== 'zamestnavatel' || duvod.value !== 'g';
   if (k === 'dohoda') {
     volbaJiny.hidden = false;
     volbaJiny.disabled = false;
@@ -59,7 +59,7 @@ function vstupy() {
     zkusebniDoba: k !== 'dohoda' && form.elements.zkusebniDoba.checked,
     konecDohody: form.elements.konecDohody.value || undefined,
     pricinaUraz: k !== 'zamestnanec' && duvod.value === 'd' && form.elements.pricina.value === 'uraz',
-    zvlastHrube: k !== 'zamestnanec' && duvod.value === 'g' && form.elements.zvlastHrube.checked,
+    zvlastHrube: k === 'zamestnavatel' && duvod.value === 'g' && form.elements.zvlastHrube.checked,
   };
 }
 
@@ -133,6 +133,7 @@ function spocitej(e) {
   if (Number.isNaN(cisty)) chyby.push('Zadejte průměrný čistý výdělek v Kč.');
   if (hruby < 1000 || cisty < 1000) chyby.push('Výdělek je podezřele nízký – zadejte měsíční částku v Kč, např. 40 000.');
   if (!datumZadosti) chyby.push('Zadejte den podání žádosti o podporu.');
+  if (v.doruceni && v.doruceni < rules.zakonikPrace.vypovedniDoba.ucinnost) chyby.push('Kalkulačka počítá výpovědi doručené od 1. 6. 2025.');
   zobrazChyby(chyby);
   if (chyby.length) return;
 
@@ -144,6 +145,10 @@ function spocitej(e) {
     p = podpora({ ...v, vek, cistyVydelek: cisty, datumZadosti }, rules);
   } catch (err) {
     zobrazChyby([err.message]);
+    return;
+  }
+  if (datumZadosti <= konec) {
+    zobrazChyby(['Žádost o podporu lze podat až po skončení pracovního poměru – zadejte den podání žádosti po posledním dni pracovního poměru.']);
     return;
   }
 
@@ -178,7 +183,7 @@ function spocitej(e) {
       poznamky.push('* Částka je omezena maximální měsíční výší podpory.');
     }
   }
-  if (v.duvod === 'g' && !v.zvlastHrube && v.kdo !== 'zamestnanec' && !v.zkusebniDoba) {
+  if (v.duvod === 'g' && !v.zvlastHrube && v.kdo === 'zamestnavatel' && !v.zkusebniDoba) {
     poznamky.push('Šlo-li o porušení povinností zvlášť hrubým způsobem, nárok na podporu nevzniká (§ 39 odst. 2 zákona o zaměstnanosti).');
   }
   if (p.hlavni?.predbezne) {
@@ -191,10 +196,10 @@ function spocitej(e) {
     poznamky.push(`Pro rok ${datumZadosti.slice(0, 4)} nejsou parametry k dispozici; použita pravidla pro rok ${p.rok}.`);
   }
   if (!p.vylouceno && (vek === 52 || vek === 57)) {
-    poznamky.push(`Hraniční věk ${vek} let: počítáno s delší podpůrčí dobou (dosavadní praxe úřadu práce). Ověřte na úřadu práce.`);
+    poznamky.push(`Hraniční věk ${vek} let: počítáno s delší podpůrčí dobou podle tabulky úřadu práce (${vek === 52 ? '52–57 let → 8 měsíců' : 'nad 57 let → 11 měsíců'}). Ověřte na úřadu práce.`);
   }
   if (v.kdo === 'zamestnavatel' && !v.zkusebniDoba) {
-    poznamky.push('Pokud by výpovědní doba skončila v ochranné době (např. pracovní neschopnost, mateřská), pracovní poměr se prodlouží o zbytek výpovědní doby (§ 53 ZP) – neplatí pro všechny důvody (§ 54 ZP).');
+    poznamky.push('Pokud by výpovědní doba skončila v ochranné době (např. pracovní neschopnost, mateřská), konec se posune o dobu, po kterou trvala ochranná doba (§ 53 odst. 2 ZP), pokud netrváte na skončení v původním termínu – neplatí pro všechny důvody (§ 54 ZP).');
   }
   poznamky.push('Podpora náleží, máte-li za poslední 2 roky alespoň 12 měsíců důchodového pojištění a nepobíráte starobní důchod (§ 39 odst. 1 ZoZ). Výpověď dohodou ani odstupné podporu nesnižují ani neodkládají; výjimkou je skončení pro zvlášť hrubé porušení povinností (§ 39 odst. 2 ZoZ).');
   $('#poznamky').replaceChildren(...poznamky.map((t) => bunka('li', t)));

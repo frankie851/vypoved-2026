@@ -265,8 +265,9 @@ export function vypocetPodpory(vek, cistyVydelek, sada) {
  */
 export function narokNaPodporu({ kdo, duvod, zkusebniDoba = false, zvlastHrube = false }, rules) {
   const v = rules.podpora.vylouceni;
-  const kOddilu = (kdo === 'zamestnavatel' || kdo === 'dohoda') && !zkusebniDoba;
-  const vylouceno = kOddilu && (v.vzdy.includes(duvod) || (Boolean(zvlastHrube) && v.zvlastHrube.includes(duvod)));
+  // „zaměstnavatelem skončen“ – jen výpověď od zaměstnavatele, ne dohoda ani zkušební doba
+  const odZamestnavatele = kdo === 'zamestnavatel' && !zkusebniDoba;
+  const vylouceno = odZamestnavatele && (v.vzdy.includes(duvod) || (Boolean(zvlastHrube) && v.zvlastHrube.includes(duvod)));
   return {
     vylouceno,
     duvod: vylouceno

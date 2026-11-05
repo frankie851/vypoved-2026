@@ -229,6 +229,8 @@ test('§ 52 písm. h) a g) pro zvlášť hrubé porušení → podpora vyloučen
   assert.deepEqual(castky(c.hlavni), [24000, 24000, 15000, 15000, 12000]);
   // výpověď zaměstnance a zrušení ve zkušební době nejsou skončením pro porušení povinností
   assert.equal(podpora({ ...zaklad, kdo: 'zamestnanec' }, rules).vylouceno, false);
+  // § 39 odst. 2 ZoZ: „zaměstnavatelem skončen“ – dohoda nárok nevylučuje
+  assert.equal(podpora({ ...zaklad, kdo: 'dohoda', duvod: 'h' }, rules).vylouceno, false);
   assert.equal(podpora({ ...zaklad, duvod: 'h', zkusebniDoba: true }, rules).vylouceno, false);
   assert.ok(rules.podpora.vylouceni.zdroj.includes('§ 39 odst. 2'));
 });
